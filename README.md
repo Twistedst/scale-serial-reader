@@ -1,11 +1,9 @@
-# electron-serialport
-An example of how to use serialport in an electron app
+# scale-serial-reader
+An Electron app that utilizes Serialport to read from a serial-usb scale and then inject the data into a webpage.
 
-**Clone and run for a quick way to see Electron and Serialport in action.**
+Originally cloned from [electron-serialport](https://github.com/johnny-five-io/electron-serialport)
 
 This is a minimal Electron application based on the [Quick Start Guide](http://electron.atom.io/docs/tutorial/quick-start) within the Electron documentation.
-
-**Use this app along with the [Electron API Demos](http://electron.atom.io/#get-started) app for API code examples to help you get started.**
 
 A basic Electron application needs just these files:
 
@@ -31,11 +29,3 @@ npm start
 ```
 
 Learn more about Electron and its API in the [documentation](http://electron.atom.io/docs/).
-
-## Other Example Apps
-
-For more example apps, see the
-[list of boilerplates](http://electron.atom.io/community/#boilerplates)
-created by the awesome electron community.
-
-#### License [CC0 1.0 (Public Domain)](LICENSE.md)
