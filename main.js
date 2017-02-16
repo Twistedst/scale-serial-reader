@@ -13,16 +13,19 @@ const url = require('url');
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow;
 
+let windowOptions = {
+  center: true,
+  width: 2000,
+  height: 1800,
+
+};
+
 function createWindow() {
   // Create the browser window.
-  mainWindow = new BrowserWindow({ width: 1200, height: 600 });
+  mainWindow = new BrowserWindow({ width: 2000, height: 1800 });
 
   // and load the index.html of the app.
-  mainWindow.loadURL(url.format({
-    pathname: path.join(__dirname, 'index.html'),
-    protocol: 'file:',
-    slashes: true
-  }));
+  mainWindow.loadURL('http://localhost:3000');
 
   // Open the DevTools.
   mainWindow.webContents.openDevTools();
@@ -41,7 +44,6 @@ function createWindow() {
 // Some APIs can only be used after this event occurs.
 app.on('ready', function() {
   createWindow();
-  shell.openExternal('localhost:3000');
 });
 
 // Quit when all windows are closed.

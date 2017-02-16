@@ -11,7 +11,7 @@ let port = new SerialPort('/dev/tty.usbserial', {
 });
 
 // Stream all data coming in from the serial port.
-port.on('data', function (data){
+port.on('data', function (data) {
   document.getElementById('weight').textContent = data;
 });
 
@@ -36,3 +36,7 @@ SerialPort.list((err, ports) => {
   ports.forEach(port => table.write(port));
   table.end();
 });
+
+let populateStorage = (dataLine) => {
+    
+};
