@@ -1,7 +1,11 @@
-const { BrowserWindow, shell, app } = require('electron');
-// Module to control application life.
-// Module to create native browser window.
+const electron = require('electron');
 
+// Module to create native browser window.
+const BrowserWindow = electron.BrowserWindow;
+// Module to control application life.
+
+const app = electron.app;
+const shell = electron.shell;
 const path = require('path');
 const url = require('url');
 
