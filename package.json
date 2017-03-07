@@ -1,12 +1,16 @@
 {
   "name": "scale-serialreader",
-  "version": "1.0.1",
+  "productName": "Scale Serial Reader",
+  "version": "0.0.1",
   "description": "An Electron application with node serialport that streams data from a serial-usb to a website.",
   "main": "main.js",
   "scripts": {
     "start": "electron .",
     "test": "NODE_ENV=DEV electron .",
-    "install": "electron-rebuild"
+    "install": "electron-rebuild",
+    "package-mac": "electron-packager . --overwrite --platform=darwin --arch=x64 --icon=assets/icons/scale.png --prune=true --out=release-builds",
+    "package-win": "electron-packager . --overwrite --asar=true --platform=win32 --arch=ia32 --icon=assets/icons/scale.png --prune=true --out=release-builds --version-string.CompanyName=Fulfillment.com --version-string.FileDescription=ScaleReader --version-string.ProductName=\"Scale Serial Reader\"",
+    "package-linux" : "electron-packager . --overwrite --platform=linux --arch=x64 --icon=assets/icons/scale.png --prune=true --out=release-builds"
   },
   "keywords": [
     "Electron",
@@ -23,6 +27,7 @@
     "babel-preset-es2015": "^6.22.0",
     "electron": "^1.4.1",
     "electron-devtools-installer": "^2.1.0",
+    "electron-packager": "^8.5.2",
     "electron-rebuild": "^1.4.0"
   },
   "dependencies": {

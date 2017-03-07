@@ -28,4 +28,15 @@ npm install
 npm start
 ```
 
+## To Package
+```bash
+# Package for each OS
+# MAC / OS X
+npm run-script package-mac
+# Windows
+npm run-script package-windows
+# Linux
+npm run-script package-linux
+```
+
 Learn more about Electron and its API in the [documentation](http://electron.atom.io/docs/).
