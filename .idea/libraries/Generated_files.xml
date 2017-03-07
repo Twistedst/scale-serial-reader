@@ -3,12 +3,10 @@
     <properties>
       <sourceFilesUrls>
         <item url="file://$PROJECT_DIR$/dist/main.js" />
-        <item url="file://$PROJECT_DIR$/dist/renderer.js" />
       </sourceFilesUrls>
     </properties>
     <CLASSES>
       <root url="file://$PROJECT_DIR$/dist/main.js" />
-      <root url="file://$PROJECT_DIR$/dist/renderer.js" />
     </CLASSES>
     <SOURCES />
   </library>
