@@ -38,5 +38,9 @@ npm run-script package-windows
 # Linux
 npm run-script package-linux
 ```
-
+## To Create Installer
+```bash
+# MAC / OS X
+npm run-script create-installer-mac
+```
 Learn more about Electron and its API in the [documentation](http://electron.atom.io/docs/).
