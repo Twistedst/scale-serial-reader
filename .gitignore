@@ -1,6 +1,3 @@
 # Created by .ignore support plugin (hsz.mobi)
-/node_modules/
-**/.idea/workspace.xml **/.idea/tasks.xml
-/release-builds/ScaleSerialReader-linux-ia32/
-/release-builds/ScaleSerialReader-darwin-x64/
-/release-builds/ScaleSerialReader-win32-ia32/
+node_modules
+release-builds
