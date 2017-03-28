@@ -42,5 +42,14 @@ npm run-script package-linux
 ```bash
 # MAC / OS X
 npm run-script create-installer-mac
+# Windows
+npm run create-installer-win
+```
+
+## Run Built Installers
+```bash
+# Windows
+Path: release-builds/windows-installer/ScaleSerialReaderInstaller.exe
+Run the above installer.
 ```
 Learn more about Electron and its API in the [documentation](http://electron.atom.io/docs/).
