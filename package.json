@@ -5,10 +5,11 @@
   "description": "An Electron application with node serialport that streams data from a serial-usb to a website.",
   "main": "main.js",
   "scripts": {
-    "postinstall": "sudo npm rebuild --runtime=electron --target=1.4.15 --disturl=https://atom.io/download/atom-shell --build-from-source",
+    "postinstall-mac": "sudo npm rebuild --runtime=electron --target=1.4.15 --disturl=https://atom.io/download/atom-shell --build-from-source",
+    "postinstall-win": "npm rebuild --runtime=electron --target=1.4.15 --disturl=https://atom.io/download/atom-shell --build-from-source",
     "start": "electron .",
     "test": "NODE_ENV=DEV electron .",
-    "install": "electron-rebuild",
+    "rebuild": "electron-rebuild",
     "package-mac": "electron-packager . --overwrite --platform=darwin --arch=x64 --icon=assets/icons/scale.png --prune=true --out=release-builds",
     "package-win": "electron-packager . --overwrite --asar=true --platform=win32 --arch=ia32 --icon=assets/icons/windows/scale.ico --prune=true --out=release-builds --version-string.CompanyName=Fulfillment.com --version-string.FileDescription=ScaleReader --version-string.ProductName=\"ScaleSerialReader\"",
     "package-linux": "electron-packager . --overwrite --platform=linux --arch=x64 --icon=assets/icons/scale.png --prune=true --out=release-builds",

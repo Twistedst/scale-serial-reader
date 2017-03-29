@@ -1,9 +1,9 @@
-//handle setupevents as quickly as possible
-const setupEvents = require('./installers/setupEvents');
-if (setupEvents.handleSquirrelEvent()) {
-  // squirrel event handled and app will exit in 1000ms, so don't do anything else
-  return;
-}
+// //handle setupevents as quickly as possible
+// const setupEvents = require('./installers/setupEvents');
+// if (setupEvents.handleSquirrelEvent()) {
+//   // squirrel event handled and app will exit in 1000ms, so don't do anything else
+//   return;
+// }
 
 const {BrowserWindow, app} = require('electron');
 const SerialPort           = require('SerialPort');
@@ -72,7 +72,7 @@ function createWindow() {
   }
 
   // and load the index.html of the app.
-  mainWindow.loadURL('http://localhost:3000/');
+  mainWindow.loadURL('https://qa-app-ui-rhea.us-east-1.elasticbeanstalk.com/');
 
   // Initialize the serial port
   initSerialPort('/dev/tty.usbserial');
