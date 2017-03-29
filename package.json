@@ -5,6 +5,7 @@
   "description": "An Electron application with node serialport that streams data from a serial-usb to a website.",
   "main": "main.js",
   "scripts": {
+    "postinstall": "sudo npm rebuild --runtime=electron --target=1.4.15 --disturl=https://atom.io/download/atom-shell --build-from-source",
     "start": "electron .",
     "test": "NODE_ENV=DEV electron .",
     "install": "electron-rebuild",
@@ -19,7 +20,7 @@
     "start",
     "serial"
   ],
-  "author": "GitHub",
+  "author": "Steven Hawley",
   "repository": {
     "type": "git",
     "url": "git://github.com/Twistedst/scale-serial-reader.git"
