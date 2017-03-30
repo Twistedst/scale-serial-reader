@@ -11,10 +11,14 @@ const path                 = require('path');
 const url                  = require('url');
 const regex                = /(ST|US),GS,\s+([0-9.]+)(lb|kb)/g;
 const currentEnvironment   = process.env.NODE_ENV;
+const possibleComNames     = [
+  '/dev/tty.usbserial',
+  'COM3'
+]; //dev/tty.usbserial = MAC ; COM3 = Windows
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
-let mainWindow, units, status, port;
+let mainWindow, units, status, port, comName;
 
 
 let windowOptions = {
@@ -25,7 +29,15 @@ let windowOptions = {
 
 /** Serial Port Stuff **/
 function initSerialPort(path) {
-  port = new SerialPort(path, {
+  SerialPort.list((list) => {
+    if (possibleComNames.includes(list.comName)) {
+      comName = list.comName;
+    }
+  });
+  if (comName === undefined) {
+    return console.log('Could not find a valid com name.');
+  }
+  port = new SerialPort(comName, {
     parser  : SerialPort.parsers.readline('\n'),
     baudrate: 19200
   });
@@ -75,7 +87,7 @@ function createWindow() {
   mainWindow.loadURL('https://qa-app-ui-rhea.us-east-1.elasticbeanstalk.com/');
 
   // Initialize the serial port
-  initSerialPort('/dev/tty.usbserial');
+  initSerialPort();
 
   mainWindow.webContents.on('did-finish-load', function () {
 
