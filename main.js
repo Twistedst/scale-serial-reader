@@ -12,13 +12,13 @@ const url                  = require('url');
 const regex                = /(ST|US),GS,\s+([0-9.]+)(lb|kb)/g;
 const currentEnvironment   = process.env.NODE_ENV;
 const possibleComNames     = [
-  '/dev/tty.usbserial',
+  "/dev/cu.usbserial",
   'COM3'
 ]; //dev/tty.usbserial = MAC ; COM3 = Windows
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
-let mainWindow, units, status, serialPort;
+let mainWindow, units, status;
 
 
 let windowOptions = {
@@ -26,27 +26,6 @@ let windowOptions = {
   width : 2200,
   height: 1800,
 };
-
-/** Serial Port Stuff **/
-function initSerialPort() {
-  let comName = '';
-
-  SerialPort.list((err, ports) => {
-    ports.forEach(function (port) {
-      if (possibleComNames.includes(port.comName)) {
-        comName = port.comName;
-      }
-    });
-  });
-  if (comName === '') {
-    return console.log('Could not find a valid com name. Please connect the scale.');
-  }
-  serialPort = new SerialPort(comName, {
-    parser  : SerialPort.parsers.readline('\n'),
-    baudrate: 19200
-  });
-}
-
 function readLine(line) {
   // console.log(line);
   let parsedLine = '0.000';
@@ -66,6 +45,43 @@ function readLine(line) {
   console.log("Status ", status);
   return parsedLine;
 }
+/** Serial Port Stuff **/
+function initSerialPort() {
+  let comName = '';
+  console.log('1');
+
+  SerialPort.list((err, ports) => {
+    console.log('2');
+    ports.forEach((tempPort) => {
+      if (possibleComNames.includes(tempPort.comName)) {
+        console.log('3');
+        comName  = tempPort.comName;
+        let port = new SerialPort(comName, {
+          parser  : SerialPort.parsers.readline('\n'),
+          baudrate: 19200
+        });
+        console.log('Port is set.');
+        // Only inject code when they are on the correct web page
+        // Stream all data coming in from the serial port.
+        port.on('data', function (data) {
+          let currentWeight = readLine(data);
+          console.log("Current Weight: ", currentWeight);
+
+          let code = `if(document.getElementById("weight") !== null){
+                    document.getElementById("weight").value = "${currentWeight}";
+                    document.getElementById("status").innerHTML = "${status}";
+                    document.getElementById("units").innerHTML = "${units}";
+                    };`;
+
+          if (mainWindow.webContents.getURL().includes('tools/weighStation')) {
+            console.log("Execute");
+            mainWindow.webContents.executeJavaScript(code);
+          }
+        });
+      }
+    });
+  });
+}
 
 
 /** BrowserWindow setup and such **/
@@ -73,6 +89,7 @@ function createWindow() {
 
   // Create the browser window.
   mainWindow = new BrowserWindow({width: 2200, height: 1800});
+
 
   // When in development environment, open the Redux DevTools Extension and the Chrome DevTools.
   // Need to have the Chrome Extension at the location below.
@@ -86,42 +103,19 @@ function createWindow() {
     // and load the index.html of the app.
     mainWindow.loadURL('https://rhea.fulfillment.com/');
   }
-
-  // Initialize the serial port
-  initSerialPort();
-
   mainWindow.webContents.on('did-finish-load', function () {
+    initSerialPort();
+  });
 
-      // Only inject code when they are on the correct web page
-      // Stream all data coming in from the serial port.
-      serialPort.on('data', function (data) {
-        let currentWeight = readLine(data);
-        console.log("Current Weight: ", currentWeight);
-        // console.log(mainWindow.webContents.getURL());
-        let code = `if(document.getElementById("weight") !== null){
-                    document.getElementById("weight").value = "${currentWeight}";
-                    document.getElementById("status").innerHTML = "${status}";
-                    document.getElementById("units").innerHTML = "${units}";
-                    };`;
-
-        if (mainWindow.webContents.getURL().includes('tools/weighStation')) {
-          console.log("Execute");
-          mainWindow.webContents.executeJavaScript(code);
-        }
-      });
-
-    }
-  )
-  ;
-
-// Emitted when the window is closed.
+  // Emitted when the window is closed.
   mainWindow.on('closed', function () {
     // Dereference the window object, usually you would store windows
     // in an array if your app supports multi windows, this is the time
     // when you should delete the corresponding element.
     mainWindow = null
-  })
+  });
 }
+
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
