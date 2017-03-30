@@ -18,7 +18,7 @@ const possibleComNames     = [
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
-let mainWindow, units, status, port, comName;
+let mainWindow, units, status, serialPort;
 
 
 let windowOptions = {
@@ -28,16 +28,20 @@ let windowOptions = {
 };
 
 /** Serial Port Stuff **/
-function initSerialPort(path) {
-  SerialPort.list((list) => {
-    if (possibleComNames.includes(list.comName)) {
-      comName = list.comName;
-    }
+function initSerialPort() {
+  let comName = '';
+
+  SerialPort.list((err, ports) => {
+    ports.forEach(function (port) {
+      if (possibleComNames.includes(port.comName)) {
+        comName = port.comName;
+      }
+    });
   });
-  if (comName === undefined) {
-    return console.log('Could not find a valid com name.');
+  if (comName === '') {
+    return console.log('Could not find a valid com name. Please connect the scale.');
   }
-  port = new SerialPort(comName, {
+  serialPort = new SerialPort(comName, {
     parser  : SerialPort.parsers.readline('\n'),
     baudrate: 19200
   });
@@ -52,10 +56,6 @@ function readLine(line) {
     if (m.index === regex.lastIndex) {
       regex.lastIndex++;
     }
-    // The result can be accessed through the `m`-variable.
-    // m.forEach((match, groupIndex) => {
-    //   console.log(`Found match, group ${groupIndex}: ${match}`);
-    // });
     units        = m[3];
     parsedLine   = m[2];
     stableString = m[1];
@@ -81,10 +81,11 @@ function createWindow() {
     BrowserWindow.addDevToolsExtension("../../Library/Application Support/Google/Chrome/Default/Extensions/lmhkpmbekcpmknklioeibfkpmmfibljd/2.14.2_0/");
     // Open the DevTools.
     mainWindow.webContents.openDevTools();
+    mainWindow.loadURL('localhost:3000');
+  } else {
+    // and load the index.html of the app.
+    mainWindow.loadURL('https://rhea.fulfillment.com/');
   }
-
-  // and load the index.html of the app.
-  mainWindow.loadURL('https://qa-app-ui-rhea.us-east-1.elasticbeanstalk.com/');
 
   // Initialize the serial port
   initSerialPort();
@@ -93,7 +94,7 @@ function createWindow() {
 
       // Only inject code when they are on the correct web page
       // Stream all data coming in from the serial port.
-      port.on('data', function (data) {
+      serialPort.on('data', function (data) {
         let currentWeight = readLine(data);
         console.log("Current Weight: ", currentWeight);
         // console.log(mainWindow.webContents.getURL());
