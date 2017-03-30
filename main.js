@@ -94,12 +94,18 @@ function createWindow() {
   // When in development environment, open the Redux DevTools Extension and the Chrome DevTools.
   // Need to have the Chrome Extension at the location below.
   // If on MAC and have Redux DevTools installed, then it should be at this location.
-  if (currentEnvironment == 'DEV') {
+  if (currentEnvironment === 'DEV') {
     BrowserWindow.addDevToolsExtension("../../Library/Application Support/Google/Chrome/Default/Extensions/lmhkpmbekcpmknklioeibfkpmmfibljd/2.14.2_0/");
     // Open the DevTools.
     mainWindow.webContents.openDevTools();
     mainWindow.loadURL('localhost:3000');
-  } else {
+  }
+  else if (currentEnvironment === 'WINDEV') {
+    // Open the DevTools.
+    mainWindow.webContents.openDevTools();
+    mainWindow.loadURL('localhost:3000');
+  }
+  else {
     // and load the index.html of the app.
     mainWindow.loadURL('https://rhea.fulfillment.com/');
   }
