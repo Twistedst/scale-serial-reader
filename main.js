@@ -48,19 +48,19 @@ function readLine(line) {
 /** Serial Port Stuff **/
 function initSerialPort() {
   let comName = '';
-  console.log('1');
 
   SerialPort.list((err, ports) => {
-    console.log('2');
     ports.forEach((tempPort) => {
       if (possibleComNames.includes(tempPort.comName)) {
-        console.log('3');
         comName  = tempPort.comName;
         let port = new SerialPort(comName, {
           parser  : SerialPort.parsers.readline('\n'),
           baudrate: 19200
+        }, (err) => {
+            if(err) {
+              return console.log('Error: ', err.message);
+            }
         });
-        console.log('Port is set.');
         // Only inject code when they are on the correct web page
         // Stream all data coming in from the serial port.
         port.on('data', function (data) {
