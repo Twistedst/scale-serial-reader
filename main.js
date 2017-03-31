@@ -48,39 +48,46 @@ function readLine(line) {
 /** Serial Port Stuff **/
 function initSerialPort() {
   let comName = '';
+  let port;
 
-  SerialPort.list((err, ports) => {
-    ports.forEach((tempPort) => {
-      if (possibleComNames.includes(tempPort.comName)) {
-        comName  = tempPort.comName;
-        let port = new SerialPort(comName, {
-          parser  : SerialPort.parsers.readline('\n'),
-          baudrate: 19200
-        }, (err) => {
-            if(err) {
+  try {
+    SerialPort.list((err, ports) => {
+      ports.forEach((tempPort) => {
+        if (possibleComNames.includes(tempPort.comName)) {
+          comName  = tempPort.comName;
+          port = new SerialPort(comName, {
+            parser  : SerialPort.parsers.readline('\n'),
+            baudrate: 19200
+          }, (err) => {
+            if (err) {
               return console.log('Error: ', err.message);
             }
-        });
-        // Only inject code when they are on the correct web page
-        // Stream all data coming in from the serial port.
-        port.on('data', function (data) {
-          let currentWeight = readLine(data);
-          console.log("Current Weight: ", currentWeight);
+          });
+          // Only inject code when they are on the correct web page
+          // Stream all data coming in from the serial port.
+          port.on('data', function (data) {
+            let currentWeight = readLine(data);
+            console.log("Current Weight: ", currentWeight);
 
-          let code = `if(document.getElementById("weight") !== null){
+            let code = `if(document.getElementById("weight") !== null){
                     document.getElementById("weight").value = "${currentWeight}";
                     document.getElementById("status").innerHTML = "${status}";
                     document.getElementById("units").innerHTML = "${units}";
                     };`;
 
-          if (mainWindow.webContents.getURL().includes('tools/weighStation')) {
-            console.log("Execute");
-            mainWindow.webContents.executeJavaScript(code);
-          }
-        });
-      }
+            if (mainWindow.webContents.getURL().includes('tools/weighStation')) {
+              console.log("Execute");
+              mainWindow.webContents.executeJavaScript(code);
+            }
+          });
+        }
+      });
     });
-  });
+  }
+  catch(err){
+    console.log('Closing the connection to the scale.');
+    port.close();
+  }
 }
 
 
@@ -109,16 +116,15 @@ function createWindow() {
     // and load the index.html of the app.
     mainWindow.loadURL('https://rhea.fulfillment.com/');
   }
-  mainWindow.webContents.on('did-finish-load', function () {
-    initSerialPort();
-  });
-
   // Emitted when the window is closed.
   mainWindow.on('closed', function () {
     // Dereference the window object, usually you would store windows
     // in an array if your app supports multi windows, this is the time
     // when you should delete the corresponding element.
-    mainWindow = null
+    mainWindow = null;
+  });
+  mainWindow.webContents.on('did-finish-load', function () {
+    initSerialPort();
   });
 }
 
@@ -144,7 +150,3 @@ app.on('activate', function () {
     createWindow();
   }
 });
-
-
-// In this file you can include the rest of your app's specific main process
-// code. You can also put them in separate files and require them here.
