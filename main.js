@@ -105,12 +105,12 @@ function createWindow() {
     BrowserWindow.addDevToolsExtension("../../Library/Application Support/Google/Chrome/Default/Extensions/lmhkpmbekcpmknklioeibfkpmmfibljd/2.14.2_0/");
     // Open the DevTools.
     mainWindow.webContents.openDevTools();
-    mainWindow.loadURL('localhost:3000');
+    mainWindow.loadURL('http://localhost:3000');
   }
   else if (currentEnvironment === 'WINDEV') {
     // Open the DevTools.
     mainWindow.webContents.openDevTools();
-    mainWindow.loadURL('localhost:3000');
+    mainWindow.loadURL('http://localhost:3000');
   }
   else {
     // and load the index.html of the app.
