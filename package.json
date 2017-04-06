@@ -1,6 +1,6 @@
 {
   "name": "scale-serialreader",
-  "productName": "ScaleSerialReader",
+  "productName": "Scale Serial Reader",
   "version": "0.0.1",
   "description": "An Electron application with node serialport that streams data from a serial-usb to a website.",
   "main": "main.js",

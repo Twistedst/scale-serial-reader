@@ -23,9 +23,9 @@ let mainWindow, units, status;
 
 let windowOptions = {
   center: true,
-  width : 2200,
-  height: 1800,
+  fullscreen: true
 };
+
 function readLine(line) {
   // console.log(line);
   let parsedLine = '0.000';
@@ -95,7 +95,7 @@ function initSerialPort() {
 function createWindow() {
 
   // Create the browser window.
-  mainWindow = new BrowserWindow({width: 2200, height: 1800});
+  mainWindow = new BrowserWindow(windowOptions);
 
 
   // When in development environment, open the Redux DevTools Extension and the Chrome DevTools.
