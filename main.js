@@ -114,7 +114,7 @@ function createWindow() {
   }
   else {
     // and load the index.html of the app.
-    mainWindow.loadURL('https://rhea.fulfillment.com/');
+    mainWindow.loadURL('https://rhea.fulfillment.com/tools/weighStation');
   }
   // Emitted when the window is closed.
   mainWindow.on('closed', function () {
