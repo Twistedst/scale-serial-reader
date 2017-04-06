@@ -13,7 +13,8 @@ const regex                = /(ST|US),GS,\s+([0-9.]+)(lb|kb)/g;
 const currentEnvironment   = process.env.NODE_ENV;
 const possibleComNames     = [
   "/dev/cu.usbserial",
-  'COM3'
+  'COM3',
+  'COM4'
 ]; //dev/tty.usbserial = MAC ; COM3 = Windows
 
 // Keep a global reference of the window object, if you don't, the window will
@@ -22,7 +23,7 @@ let mainWindow, units, status;
 
 
 let windowOptions = {
-  center: true,
+  center    : true,
   fullscreen: true
 };
 
@@ -54,8 +55,8 @@ function initSerialPort() {
     SerialPort.list((err, ports) => {
       ports.forEach((tempPort) => {
         if (possibleComNames.includes(tempPort.comName)) {
-          comName  = tempPort.comName;
-          port = new SerialPort(comName, {
+          comName = tempPort.comName;
+          port    = new SerialPort(comName, {
             parser  : SerialPort.parsers.readline('\n'),
             baudrate: 19200
           }, (err) => {
@@ -84,7 +85,7 @@ function initSerialPort() {
       });
     });
   }
-  catch(err){
+  catch (err) {
     console.log('Closing the connection to the scale.');
     port.close();
   }
