@@ -14,7 +14,7 @@ const currentEnvironment   = process.env.NODE_ENV;
 const possibleComNames     = [
   "/dev/cu.usbserial",
   'COM3',
-  'COM4'
+  'COM4',
 ]; //dev/tty.usbserial = MAC ; COM3 = Windows
 
 // Keep a global reference of the window object, if you don't, the window will
@@ -103,7 +103,7 @@ function createWindow() {
   // Need to have the Chrome Extension at the location below.
   // If on MAC and have Redux DevTools installed, then it should be at this location.
   if (currentEnvironment === 'DEV') {
-    BrowserWindow.addDevToolsExtension("../../Library/Application Support/Google/Chrome/Default/Extensions/lmhkpmbekcpmknklioeibfkpmmfibljd/2.14.2_0/");
+    BrowserWindow.addDevToolsExtension("../../Library/Application Support/Google/Chrome/Default/Extensions/lmhkpmbekcpmknklioeibfkpmmfibljd/2.14.3_0/");
     // Open the DevTools.
     mainWindow.webContents.openDevTools();
     mainWindow.loadURL('http://localhost:3000');
