@@ -15,6 +15,7 @@ const possibleComNames     = [
   "/dev/cu.usbserial",
   'COM3',
   'COM4',
+  'COM5',
 ]; //dev/tty.usbserial = MAC ; COM3 = Windows
 
 // Keep a global reference of the window object, if you don't, the window will
@@ -23,8 +24,12 @@ let mainWindow, units, status;
 
 
 let windowOptions = {
-  center    : true,
-  fullscreen: true
+  center       : true,
+  minWidth     : 1000,
+  minHeight    : 768,
+  width        : 1366,
+  height       : 768,
+  titleBarStyle: 'hidden',
 };
 
 function readLine(line) {
