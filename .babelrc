@@ -1,3 +1,9 @@
 {
-  "presets": ["es2015"]
+  "presets": ["es2015"],
+  "ignore": [
+	"node_modules",
+	"release-builds",
+	"installers",
+	"dist"
+  ]
 }

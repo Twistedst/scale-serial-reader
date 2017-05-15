@@ -1,6 +1,6 @@
 {
   "name": "scale-serialreader",
-  "productName": "Scale Serial Reader",
+  "productName": "ScaleSerialReader",
   "version": "0.0.1",
   "description": "An Electron application with node serialport that streams data from a serial-usb to a website.",
   "main": "main.js",
@@ -13,7 +13,7 @@
     "rebuild": "electron-rebuild",
     "package-mac": "electron-packager . --overwrite --platform=darwin --arch=x64 --icon=assets/icons/scale.png --prune=true --out=release-builds",
     "package-win": "electron-packager . --overwrite --asar=true --platform=win32 --arch=ia32 --icon=assets/icons/windows/scale.ico --prune=true --out=release-builds --version-string.CompanyName=Fulfillment.com --version-string.FileDescription=ScaleReader --version-string.ProductName=\"ScaleSerialReader\"",
-    "package-linux": "electron-packager . --overwrite --platform=linux --arch=x64 --icon=assets/icons/scale.png --prune=true --out=release-builds",
+    "package-linux": "electron-packager . --overwrite --platform=linux --arch=all --icon=assets/icons/scale.png --prune=true --out=release-builds",
     "create-installer-mac": "electron-installer-dmg ./release-builds/ScaleSerialReader-darwin-x64/ScaleSerialReader.app scale-serial-reader --out=release-builds --overwrite --icon=assets/icons/scale.png",
     "create-installer-win": "node installers/windows/createinstaller.js",
     "build-win": "npm install && npm run postinstall-win && npm run rebuild",

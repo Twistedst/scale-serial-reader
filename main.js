@@ -1,10 +1,3 @@
-// //handle setupevents as quickly as possible
-// const setupEvents = require('./installers/setupEvents');
-// if (setupEvents.handleSquirrelEvent()) {
-//   // squirrel event handled and app will exit in 1000ms, so don't do anything else
-//   return;
-// }
-
 const { BrowserWindow, app } = require( 'electron' );
 const SerialPort             = require( 'SerialPort' );
 const path                   = require( 'path' );
@@ -34,7 +27,6 @@ let windowOptions = {
 };
 
 function readLine( line ){
-  // console.log(line);
   let parsedLine = '0.000';
   let stableString;
   while((m = regex.exec( line )) !== null) {
@@ -109,7 +101,7 @@ function createWindow(){
   // Need to have the Chrome Extension at the location below.
   // If on MAC and have Redux DevTools installed, then it should be at this location.
   if(currentEnvironment === 'DEV') {
-	BrowserWindow.addDevToolsExtension( "../../Library/Application Support/Google/Chrome/Default/Extensions/lmhkpmbekcpmknklioeibfkpmmfibljd/2.14.3_0/" );
+	BrowserWindow.addDevToolsExtension( "../../Library/Application Support/Google/Chrome/Default/Extensions/lmhkpmbekcpmknklioeibfkpmmfibljd/2.15.1_0/" );
 	// Open the DevTools.
 	mainWindow.webContents.openDevTools();
 	mainWindow.loadURL( 'http://localhost:3000' );
@@ -121,7 +113,7 @@ function createWindow(){
   }
   else {
 	// and load the index.html of the app.
-	mainWindow.loadURL( 'https://rhea.fulfillment.com/tools/weighStation' );
+	mainWindow.loadURL( 'https://rhea.fulfillment.com/' );
   }
   // Emitted when the window is closed.
   mainWindow.on( 'closed', function(){

@@ -29,6 +29,7 @@ npm start
 ```
 
 ## To Package
+If these commands are successful, the packaged app will be placed inside the release-builds folder.
 ```bash
 # Package for each OS
 # MAC / OS X
