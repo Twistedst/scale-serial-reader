@@ -11,6 +11,9 @@ const possibleComNames       = [
   'COM3',
   'COM4',
   'COM5',
+  'COM6',
+  'COM7',
+  'COM8',
 ]; //dev/tty.usbserial = MAC ; COM3 = Windows
 
 // Keep a global reference of the window object, if you don't, the window will
@@ -84,8 +87,7 @@ function initSerialPort(){
 	} );
   }
   catch(err) {
-	console.log( 'Closing the connection to the scale.' );
-	port.close();
+	console.log( 'I caught a thing. ' . err );
   }
 }
 
@@ -113,7 +115,7 @@ function createWindow(){
   }
   else {
 	// and load the index.html of the app.
-	mainWindow.loadURL( 'https://rhea.fulfillment.com/' );
+	mainWindow.loadURL( 'https://ws.fulfillment.com/' );
   }
   // Emitted when the window is closed.
   mainWindow.on( 'closed', function(){
