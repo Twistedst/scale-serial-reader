@@ -14,6 +14,7 @@ const possibleComNames       = [
   'COM6',
   'COM7',
   'COM8',
+    'COM9',
 ]; //dev/tty.usbserial = MAC ; COM3 = Windows
 
 // Keep a global reference of the window object, if you don't, the window will
