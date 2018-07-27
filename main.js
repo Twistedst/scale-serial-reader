@@ -14,7 +14,7 @@ const possibleComNames       = [
   'COM6',
   'COM7',
   'COM8',
-    'COM9',
+  'COM9',
 ]; //dev/tty.usbserial = MAC ; COM3 = Windows
 
 // Keep a global reference of the window object, if you don't, the window will
@@ -48,6 +48,7 @@ function readLine( line ){
   console.log( "Status ", status );
   return parsedLine;
 }
+
 /** Serial Port Stuff **/
 function initSerialPort(){
   let comName = '';
@@ -60,7 +61,7 @@ function initSerialPort(){
 		  comName = tempPort.comName;
 		  port    = new SerialPort( comName, {
 			parser: SerialPort.parsers.readline( '\n' ),
-			baudrate: 19200
+			baudrate: 9600
 		  }, ( err ) =>{
 			if(err) {
 			  return console.log( 'Error: ', err.message );
@@ -88,7 +89,7 @@ function initSerialPort(){
 	} );
   }
   catch(err) {
-	console.log( 'I caught a thing. ' . err );
+	console.log( 'I caught a thing. '.err );
   }
 }
 
