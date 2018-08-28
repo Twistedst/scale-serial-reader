@@ -9,6 +9,7 @@ var path = require('path');
 var url = require('url');
 var regex = /(ST|US),GS,\s+([0-9.]+)(lb|kb)/g;
 var currentEnvironment = process.env.NODE_ENV;
+var isOnline = require('is-online');
 var possibleComNames = ["/dev/cu.usbserial", 'COM1', 'COM2', 'COM3', 'COM4', 'COM5', 'COM6', 'COM7', 'COM8', 'COM9']; //dev/tty.usbserial = MAC ; COM3 = Windows
 
 // Keep a global reference of the window object, if you don't, the window will
@@ -43,6 +44,22 @@ function readLine(line) {
   console.log("Status ", status);
   return parsedLine;
 }
+
+function closeWindow() {
+  var closeMessage = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'you did something wrong.';
+
+  mainWindow.close();
+  console.log('Window closed because ' + closeMessage);
+}
+
+// Check that the PC has internet once the window is open every couple seconds
+setInterval(function () {
+  return isOnline().then(function (online) {
+    if (online !== true) {
+      closeWindow('you have lost internet.');
+    }
+  });
+}, 1000);
 
 /** Serial Port Stuff **/
 function initSerialPort() {

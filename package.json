@@ -40,6 +40,7 @@
     "electron-winstaller": "^2.5.2"
   },
   "dependencies": {
+    "is-online": "^7.0.0",
     "serialport": "^4.0.7"
   }
 }

@@ -4,6 +4,7 @@ const path                   = require( 'path' );
 const url                    = require( 'url' );
 const regex                  = /(ST|US),GS,\s+([0-9.]+)(lb|kb)/g;
 const currentEnvironment     = process.env.NODE_ENV;
+const isOnline               = require( 'is-online' );
 const possibleComNames       = [
   "/dev/cu.usbserial",
   'COM1',
@@ -20,7 +21,6 @@ const possibleComNames       = [
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow, units, status;
-
 
 let windowOptions = {
   center: true,
@@ -49,20 +49,34 @@ function readLine( line ){
   return parsedLine;
 }
 
+function closeWindow( closeMessage = 'you did something wrong.' ){
+  mainWindow.close();
+  console.log( 'Window closed because ' + closeMessage );
+}
+
+// Check that the PC has internet once the window is open every couple seconds
+setInterval( () => isOnline().then( online => {
+	  if(online !== true) {
+		closeWindow( 'you have lost internet.' );
+	  }
+	} ), 1000
+);
+
+
 /** Serial Port Stuff **/
 function initSerialPort(){
   let comName = '';
   let port;
   
   try {
-	SerialPort.list( ( err, ports ) =>{
-	  ports.forEach( ( tempPort ) =>{
+	SerialPort.list( ( err, ports ) => {
+	  ports.forEach( ( tempPort ) => {
 		if(possibleComNames.includes( tempPort.comName )) {
 		  comName = tempPort.comName;
 		  port    = new SerialPort( comName, {
 			parser: SerialPort.parsers.readline( '\n' ),
 			baudrate: 9600
-		  }, ( err ) =>{
+		  }, ( err ) => {
 			if(err) {
 			  return console.log( 'Error: ', err.message );
 			}
