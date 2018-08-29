@@ -4,7 +4,8 @@ var _require = require('electron'),
     BrowserWindow = _require.BrowserWindow,
     app = _require.app;
 
-var SerialPort = require('SerialPort');
+var SerialPort = require('serialport');
+var Readline = SerialPort.parsers.Readline;
 var path = require('path');
 var url = require('url');
 var regex = /(ST|US),GS,\s+([0-9.]+)(lb|kb)/g;
@@ -65,23 +66,19 @@ setInterval(function () {
 function initSerialPort() {
   var comName = '';
   var port = void 0;
+  var parser = new Readline();
 
   try {
     SerialPort.list(function (err, ports) {
       ports.forEach(function (tempPort) {
         if (possibleComNames.includes(tempPort.comName)) {
           comName = tempPort.comName;
-          port = new SerialPort(comName, {
-            parser: SerialPort.parsers.readline('\n'),
-            baudrate: 9600
-          }, function (err) {
-            if (err) {
-              return console.log('Error: ', err.message);
-            }
-          });
+          port = new SerialPort(comName);
+          port.pipe(parser);
+
           // Only inject code when they are on the correct web page
           // Stream all data coming in from the serial port.
-          port.on('data', function (data) {
+          parser.on('data', function (data) {
             var currentWeight = readLine(data);
             console.log("Current Weight: ", currentWeight);
 

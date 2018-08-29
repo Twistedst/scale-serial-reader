@@ -28,29 +28,11 @@ npm install
 npm start
 ```
 
-## To Package
-If these commands are successful, the packaged app will be placed inside the release-builds folder.
+## To Package and Create Installer
+If these commands are successful, the packaged app will be placed inside the dist folder.
 ```bash
-# Package for each OS
-# MAC / OS X
-npm run-script package-mac
-# Windows
-npm run-script package-windows
-# Linux
-npm run-script package-linux
-```
-## To Create Installer
-```bash
-# MAC / OS X
-npm run-script create-installer-mac
-# Windows
-npm run create-installer-win
+# Package for Windows
+npm run dist
 ```
 
-## Run Built Installers
-```bash
-# Windows
-Path: release-builds/windows-installer/ScaleSerialReaderInstaller.exe
-Run the above installer.
-```
 Learn more about Electron and its API in the [documentation](http://electron.atom.io/docs/).
