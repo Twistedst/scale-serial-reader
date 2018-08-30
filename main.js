@@ -1,6 +1,6 @@
 const { BrowserWindow, app } = require( 'electron' );
 const SerialPort             = require( 'serialport' );
-const Readline = SerialPort.parsers.Readline;
+const Readline               = SerialPort.parsers.Readline;
 const path                   = require( 'path' );
 const url                    = require( 'url' );
 const regex                  = /(ST|US),GS,\s+([0-9.]+)(lb|kb)/g;
@@ -66,7 +66,7 @@ setInterval( () => isOnline().then( online => {
 
 /** Serial Port Stuff **/
 function initSerialPort(){
-  let comName = '';
+  let comName  = '';
   let port;
   const parser = new Readline();
   
@@ -76,7 +76,12 @@ function initSerialPort(){
 		if(possibleComNames.includes( tempPort.comName )) {
 		  comName = tempPort.comName;
 		  port    = new SerialPort( comName );
-		  port.pipe(parser);
+		  port.pipe( parser );
+		  
+		  port.on( 'close', function(){
+			console.log( 'Port has been closed.' );
+			closeWindow( 'Port has been closed.' );
+		  } );
 		  
 		  // Only inject code when they are on the correct web page
 		  // Stream all data coming in from the serial port.
@@ -100,6 +105,7 @@ function initSerialPort(){
 	} );
   }
   catch(err) {
+	closeWindow( 'You have lost internet.' );
 	console.log( 'I caught a thing. '.err );
   }
 }

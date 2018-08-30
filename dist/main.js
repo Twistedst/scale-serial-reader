@@ -76,6 +76,11 @@ function initSerialPort() {
           port = new SerialPort(comName);
           port.pipe(parser);
 
+          port.on('close', function () {
+            console.log('Port has been closed.');
+            closeWindow('Port has been closed.');
+          });
+
           // Only inject code when they are on the correct web page
           // Stream all data coming in from the serial port.
           parser.on('data', function (data) {
@@ -93,6 +98,7 @@ function initSerialPort() {
       });
     });
   } catch (err) {
+    closeWindow('You have lost internet.');
     console.log('I caught a thing. '.err);
   }
 }
