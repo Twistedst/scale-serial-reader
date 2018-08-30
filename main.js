@@ -1,3 +1,6 @@
+const { autoUpdater } = require( 'electron-updater' );
+autoUpdater.checkForUpdatesAndNotify();
+
 const { BrowserWindow, app } = require( 'electron' );
 const SerialPort             = require( 'serialport' );
 const Readline               = SerialPort.parsers.Readline;

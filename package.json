@@ -1,7 +1,7 @@
 {
 	"name": "scale-serialreader",
 	"productName": "ScaleSerialReader",
-	"version": "0.0.4",
+	"version": "0.0.7",
 	"description": "An Electron application with node serialport that streams data from a serial-usb to a website.",
 	"main": "main.js",
 	"scripts": {
@@ -11,7 +11,8 @@
 		"test-win": "SET NODE_ENV=WINDEV electron .",
 		"pack": "build --dir",
 		"dist": "build",
-		"build-mac": "npm install && npm run postinstall-mac && npm run rebuild"
+		"build-mac": "npm install && npm run postinstall-mac && npm run rebuild",
+		"publish": "build -p always"
 	},
 	"keywords": [
 		"Electron",
@@ -28,6 +29,11 @@
 		"win": {
 			"target": "nsis",
 			"icon": "assets/icons/windows/scale.ico"
+		},
+		"publish": {
+			"provider": "github",
+			"owner": "twistedst",
+			"repo": "scale-serial-reader"
 		}
 	},
 	"devDependencies": {
@@ -37,6 +43,7 @@
 		"electron-builder": "^20.28.3"
 	},
 	"dependencies": {
+		"electron-updater": "^3.1.2",
 		"is-online": "^7.0.0",
 		"serialport": "^6.2.2"
 	},
