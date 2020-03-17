@@ -1,8 +1,13 @@
 'use strict';
 
-var _require = require('electron'),
-    BrowserWindow = _require.BrowserWindow,
-    app = _require.app;
+var _require = require('electron-updater'),
+    autoUpdater = _require.autoUpdater;
+
+autoUpdater.checkForUpdatesAndNotify();
+
+var _require2 = require('electron'),
+    BrowserWindow = _require2.BrowserWindow,
+    app = _require2.app;
 
 var SerialPort = require('serialport');
 var Readline = SerialPort.parsers.Readline;
@@ -123,7 +128,7 @@ function createWindow() {
     mainWindow.loadURL('http://localhost:3000');
   } else {
     // and load the index.html of the app.
-    mainWindow.loadURL('https://ws.fulfillment.com/');
+    mainWindow.loadURL('https://oms.fulfillment.com/');
   }
   // Emitted when the window is closed.
   mainWindow.on('closed', function () {

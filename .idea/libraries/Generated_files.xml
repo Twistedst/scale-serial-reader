@@ -2,14 +2,10 @@
   <library name="Generated files" type="javaScript">
     <properties>
       <sourceFilesUrls>
-        <item url="file://$PROJECT_DIR$/dist/installers/setupEvents.js" />
-        <item url="file://$PROJECT_DIR$/dist/installers/windows/createInstaller.js" />
         <item url="file://$PROJECT_DIR$/dist/main.js" />
       </sourceFilesUrls>
     </properties>
     <CLASSES>
-      <root url="file://$PROJECT_DIR$/dist/installers/setupEvents.js" />
-      <root url="file://$PROJECT_DIR$/dist/installers/windows/createInstaller.js" />
       <root url="file://$PROJECT_DIR$/dist/installers/setupEvents.js" />
       <root url="file://$PROJECT_DIR$/dist/installers/windows/createInstaller.js" />
       <root url="file://$PROJECT_DIR$/dist/main.js" />

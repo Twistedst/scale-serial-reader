@@ -1,7 +1,7 @@
 {
 	"name": "scale-serialreader",
 	"productName": "ScaleSerialReader",
-	"version": "0.0.7",
+	"version": "0.0.8",
 	"description": "An Electron application with node serialport that streams data from a serial-usb to a website.",
 	"main": "main.js",
 	"scripts": {
@@ -40,10 +40,10 @@
 		"babel-cli": "^6.23.0",
 		"babel-preset-es2015": "^6.22.0",
 		"electron": "^1.8.8",
-		"electron-builder": "^20.28.3"
+		"electron-builder": "^20.44.4"
 	},
 	"dependencies": {
-		"electron-updater": "^3.1.2",
+		"electron-updater": "^3.2.3",
 		"is-online": "^7.0.0",
 		"serialport": "^6.2.2"
 	},
