@@ -1,5 +1,5 @@
 const { autoUpdater } = require( 'electron-updater' );
-autoUpdater.checkForUpdatesAndNotify();
+const log             = require( 'electron-log' );
 
 const { BrowserWindow, app } = require( 'electron' );
 const SerialPort             = require( 'serialport' );
@@ -21,6 +21,10 @@ const possibleComNames       = [
   'COM8',
   'COM9',
 ]; //dev/tty.usbserial = MAC ; COM3 = Windows
+
+autoUpdater.logger                       = log;
+autoUpdater.logger.transports.file.level = 'info';
+log.info( 'App starting...' );
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -156,6 +160,7 @@ function createWindow(){
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.on( 'ready', function(){
+  autoUpdater.checkForUpdatesAndNotify();
   createWindow();
 } );
 

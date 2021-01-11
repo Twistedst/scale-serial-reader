@@ -1,8 +1,9 @@
 {
 	"name": "scale-serialreader",
 	"productName": "ScaleSerialReader",
-	"version": "0.0.9",
+	"version": "0.1.0",
 	"description": "An Electron application with node serialport that streams data from a serial-usb to a website.",
+	"author": "Steven Hawley",
 	"main": "main.js",
 	"scripts": {
 		"postinstall-mac": "sudo npm rebuild --runtime=electron --target=1.8.8 --disturl=https://atom.io/download/atom-shell --build-from-source",
@@ -19,21 +20,11 @@
 		"start",
 		"serial"
 	],
-	"author": "Steven Hawley",
-	"repository": {
-		"type": "git",
-		"url": "git://github.com/Twistedst/scale-serial-reader.git"
-	},
 	"build": {
 		"appId": "com.twistedst.scaleserialreader",
 		"win": {
 			"target": "nsis",
 			"icon": "assets/icons/windows/scale.ico"
-		},
-		"publish": {
-			"provider": "github",
-			"owner": "twistedst",
-			"repo": "scale-serial-reader"
 		}
 	},
 	"devDependencies": {

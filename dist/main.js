@@ -3,7 +3,7 @@
 var _require = require('electron-updater'),
     autoUpdater = _require.autoUpdater;
 
-autoUpdater.checkForUpdatesAndNotify();
+var log = require('electron-log');
 
 var _require2 = require('electron'),
     BrowserWindow = _require2.BrowserWindow,
@@ -17,6 +17,10 @@ var regex = /(ST|US),GS,\s+([0-9.]+)(lb|kb)/g;
 var currentEnvironment = process.env.NODE_ENV;
 var isOnline = require('is-online');
 var possibleComNames = ["/dev/cu.usbserial", 'COM1', 'COM2', 'COM3', 'COM4', 'COM5', 'COM6', 'COM7', 'COM8', 'COM9']; //dev/tty.usbserial = MAC ; COM3 = Windows
+
+autoUpdater.logger = log;
+autoUpdater.logger.transports.file.level = 'info';
+log.info('App starting...');
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -146,6 +150,7 @@ function createWindow() {
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.on('ready', function () {
+  autoUpdater.checkForUpdatesAndNotify();
   createWindow();
 });
 
