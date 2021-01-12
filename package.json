@@ -13,7 +13,7 @@
 		"pack": "electron-builder --dir",
 		"dist": "electron-builder",
 		"build-mac": "npm install && npm run postinstall-mac && npm run rebuild",
-		"publish": "build -p always"
+		"publish": "electron-builder -p always"
 	},
 	"keywords": [
 		"Electron",
