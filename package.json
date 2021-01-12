@@ -1,7 +1,7 @@
 {
 	"name": "scale-serialreader",
 	"productName": "ScaleSerialReader",
-	"version": "0.1.0",
+	"version": "0.1.1",
 	"description": "An Electron application with node serialport that streams data from a serial-usb to a website.",
 	"author": "Steven Hawley",
 	"main": "main.js",
@@ -34,6 +34,7 @@
 		"electron-builder": "^20.44.4"
 	},
 	"dependencies": {
+		"electron-log": "^4.3.*",
 		"electron-updater": "^4.3.5",
 		"is-online": "^8.5.1",
 		"serialport": "^9.0.2"
