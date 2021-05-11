@@ -1,5 +1,5 @@
 {
-  "presets": ["es2015"],
+  "presets": ["@babel/preset-flow", "@babel/preset-es2015"],
   "ignore": [
 	"node_modules",
 	"release-builds",

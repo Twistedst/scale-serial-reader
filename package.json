@@ -13,7 +13,7 @@
 		"pack": "electron-builder --dir",
 		"dist": "electron-builder",
 		"build-mac": "npm install && npm run postinstall-mac && npm run rebuild",
-		"publish": "electron-builder -p always"
+		"publish": "electron-builder -p onTag"
 	},
 	"keywords": [
 		"Electron",
@@ -23,21 +23,23 @@
 	"build": {
 		"appId": "com.twistedst.scaleserialreader",
 		"win": {
-			"target": "nsis",
+			"provider": "github",
 			"icon": "assets/icons/windows/scale.ico"
 		}
 	},
 	"devDependencies": {
-		"babel-cli": "^6.26.0",
-		"babel-preset-es2015": "^6.24.1",
-		"electron": "^11.1.1",
-		"electron-builder": "^22.9.1"
+		"@babel/cli": "^7.13.16",
+		"@babel/core": "^7.14.0",
+		"@babel/preset-env": "^7.14.1",
+		"electron": "^11.4.6",
+		"electron-builder": "^22.11.3",
+		"electron-rebuild": "^2.3.5"
 	},
 	"dependencies": {
-		"electron-log": "^4.3.1",
-		"electron-updater": "^4.3.5",
+		"electron-log": "^4.3.5",
+		"electron-updater": "^4.3.9",
 		"is-online": "^9.0.0",
-		"serialport": "^9.0.4"
+		"serialport": "^9.0.7"
 	},
 	"license": "mit"
 }

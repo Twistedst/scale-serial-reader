@@ -22,8 +22,8 @@ const possibleComNames = [
     'COM9',
 ]; //dev/tty.usbserial = MAC ; COM3 = Windows
 
-autoUpdater.logger = log;
-autoUpdater.logger.transports.file.level = 'info';
+// autoUpdater.logger = log;
+// autoUpdater.logger.transports.file.level = 'info';
 log.info('App starting...');
 
 // Keep a global reference of the window object, if you don't, the window will
@@ -39,6 +39,7 @@ let windowOptions = {
 };
 
 function readLine(line) {
+    log.info('Line ' + line);
     let parsedLine = '0.000';
     let stableString;
     while ((m = regex.exec(line)) !== null) {
@@ -53,13 +54,13 @@ function readLine(line) {
     if (stableString !== undefined) {
         status = stableString;
     }
-    console.log("Status ", status);
+    log.info("Status ", status);
     return parsedLine;
 }
 
 function closeWindow(closeMessage = 'you did something wrong.') {
     mainWindow.close();
-    console.log('Window closed because ' + closeMessage);
+    log.info('Window closed because ' + closeMessage);
 }
 
 // Check that the PC has internet once the window is open every couple seconds
@@ -76,17 +77,27 @@ function initSerialPort() {
     let comName = '';
     let port;
     const parser = new Readline();
+    log.info("Init");
 
     try {
-        SerialPort.list().then((err, ports) => {
+        SerialPort.list().then((ports) => {
+            if (ports.length === 0) {
+                log.info('NO PORTS')
+            }
             ports.forEach((tempPort) => {
-                if (possibleComNames.includes(tempPort.comName)) {
-                    comName = tempPort.comName;
-                    port = new SerialPort(comName);
+                log.info('Found ' + tempPort.path);
+                if (possibleComNames.includes(tempPort.path)) {
+                    comName = tempPort.path;
+                    try {
+                        port = new SerialPort(comName);
+                    } catch (e) {
+                        log.error(e);
+                    }
+
                     port.pipe(parser);
 
                     port.on('close', function () {
-                        console.log('Port has been closed.');
+                        log.info('Port has been closed.');
                         closeWindow('Port has been closed.');
                     });
 
@@ -94,7 +105,7 @@ function initSerialPort() {
                     // Stream all data coming in from the serial port.
                     parser.on('data', function (data) {
                         let currentWeight = readLine(data);
-                        console.log("Current Weight: ", currentWeight);
+                        log.info("Current Weight: ", currentWeight);
 
                         let code = `if(document.getElementById("weight") !== null){
                     document.getElementById("weight").value = "${currentWeight}";
@@ -103,7 +114,7 @@ function initSerialPort() {
                     };`;
 
                         if (mainWindow.webContents.getURL().includes('tools/weighStation')) {
-                            console.log("Execute");
+                            log.info("Execute");
                             mainWindow.webContents.executeJavaScript(code);
                         }
                     });
@@ -112,7 +123,7 @@ function initSerialPort() {
         });
     } catch (err) {
         closeWindow('You have lost internet.');
-        console.log('I caught a thing. '.err);
+        log.info('I caught a thing. '.err);
     }
 }
 
@@ -157,7 +168,7 @@ function createWindow() {
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.on('ready', function () {
-    autoUpdater.checkForUpdatesAndNotify();
+    // autoUpdater.checkForUpdatesAndNotify();
     createWindow();
 });
 
