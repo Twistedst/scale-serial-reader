@@ -1,45 +1,49 @@
 {
-	"name": "scale-serialreader",
-	"productName": "ScaleSerialReader",
-	"version": "0.1.2",
-	"description": "An Electron application with node serialport that streams data from a serial-usb to a website.",
-	"author": "Steven Hawley",
-	"main": "main.js",
-	"scripts": {
-		"postinstall-mac": "sudo npm rebuild --runtime=electron --target=1.8.8 --disturl=https://atom.io/download/atom-shell --build-from-source",
-		"start": "electron .",
-		"test-mac": "NODE_ENV=DEV electron .",
-		"test-win": "SET NODE_ENV=WINDEV electron .",
-		"pack": "electron-builder --dir",
-		"dist": "electron-builder",
-		"build-mac": "npm install && npm run postinstall-mac && npm run rebuild",
-		"publish": "electron-builder -p onTag"
-	},
-	"keywords": [
-		"Electron",
-		"start",
-		"serial"
-	],
-	"build": {
-		"appId": "com.twistedst.scaleserialreader",
-		"win": {
-			"provider": "github",
-			"icon": "assets/icons/windows/scale.ico"
-		}
-	},
-	"devDependencies": {
-		"@babel/cli": "^7.13.16",
-		"@babel/core": "^7.14.0",
-		"@babel/preset-env": "^7.14.1",
-		"electron": "^11.4.6",
-		"electron-builder": "^22.11.3",
-		"electron-rebuild": "^2.3.5"
-	},
-	"dependencies": {
-		"electron-log": "^4.3.5",
-		"electron-updater": "^4.3.9",
-		"is-online": "^9.0.0",
-		"serialport": "^9.0.7"
-	},
-	"license": "mit"
+  "name": "scale-serialreader",
+  "productName": "ScaleSerialReader",
+  "version": "0.0.7",
+  "description": "An Electron application with node serialport that streams data from a serial-usb to a website.",
+  "author": "Steven Hawley",
+  "main": "main.js",
+  "scripts": {
+    "postinstall-mac": "sudo npm rebuild --runtime=electron --target=1.8.8 --disturl=https://atom.io/download/atom-shell --build-from-source",
+    "start": "electron .",
+    "test-mac": "NODE_ENV=DEV electron .",
+    "test-win": "SET NODE_ENV=WINDEV electron .",
+    "pack": "electron-builder --dir",
+    "dist": "electron-builder",
+    "build-mac": "npm install && npm run postinstall-mac && npm run rebuild",
+    "publish": "electron-builder -p onTag"
+  },
+  "keywords": [
+    "Electron",
+    "start",
+    "serial"
+  ],
+  "build": {
+    "appId": "com.twistedst.scaleserialreader",
+    "productName": "Weigh Station",
+    "provider": "github",
+    "win": {
+      "target": [
+        "nsis"
+      ],
+      "icon": "assets/icons/windows/scale.ico"
+    }
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.13.16",
+    "@babel/core": "^7.14.0",
+    "@babel/preset-env": "^7.14.1",
+    "electron": "^11.4.6",
+    "electron-builder": "^22.11.3",
+    "electron-rebuild": "^2.3.5"
+  },
+  "dependencies": {
+    "electron-log": "^4.3.5",
+    "electron-updater": "^4.3.9",
+    "is-online": "^9.0.0",
+    "serialport": "^9.0.7"
+  },
+  "license": "mit"
 }

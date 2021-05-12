@@ -22,8 +22,8 @@ const possibleComNames = [
     'COM9',
 ]; //dev/tty.usbserial = MAC ; COM3 = Windows
 
-// autoUpdater.logger = log;
-// autoUpdater.logger.transports.file.level = 'info';
+autoUpdater.logger = log;
+autoUpdater.logger.transports.file.level = 'info';
 log.info('App starting...');
 
 // Keep a global reference of the window object, if you don't, the window will
@@ -130,11 +130,9 @@ function initSerialPort() {
 
 /** BrowserWindow setup and such **/
 function createWindow() {
-
     // Create the browser window.
     mainWindow = new BrowserWindow(windowOptions);
-
-
+    
     // When in development environment, open the Redux DevTools Extension and the Chrome DevTools.
     // Need to have the Chrome Extension at the location below.
     // If on MAC and have Redux DevTools installed, then it should be at this location.
@@ -168,8 +166,11 @@ function createWindow() {
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.on('ready', function () {
-    autoUpdater.checkForUpdatesAndNotify();
     createWindow();
+});
+
+mainWindow.once('ready-to-show', () => {
+    autoUpdater.checkForUpdatesAndNotify();
 });
 
 // Quit when all windows are closed.
