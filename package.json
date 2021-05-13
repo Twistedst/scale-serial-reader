@@ -1,7 +1,7 @@
 {
   "name": "scale-serialreader",
   "productName": "ScaleSerialReader",
-  "version": "0.0.7",
+  "version": "0.0.9",
   "description": "An Electron application with node serialport that streams data from a serial-usb to a website.",
   "author": "Steven Hawley",
   "main": "main.js",
@@ -13,7 +13,7 @@
     "pack": "electron-builder --dir",
     "dist": "electron-builder",
     "build-mac": "npm install && npm run postinstall-mac && npm run rebuild",
-    "publish": "electron-builder -p onTag"
+    "publish": "electron-builder -p always"
   },
   "keywords": [
     "Electron",
@@ -23,13 +23,18 @@
   "build": {
     "appId": "com.twistedst.scaleserialreader",
     "productName": "Weigh Station",
-    "provider": "github",
+    "publish": [
+      {
+        "provider": "github"
+      }
+    ],
     "win": {
       "target": [
         "nsis"
       ],
       "icon": "assets/icons/windows/scale.ico"
-    }
+    },
+    "buildDependenciesFromSource": true
   },
   "devDependencies": {
     "@babel/cli": "^7.13.16",
@@ -43,7 +48,7 @@
     "electron-log": "^4.3.5",
     "electron-updater": "^4.3.9",
     "is-online": "^9.0.0",
-    "serialport": "^9.0.7"
+    "serialport": "^9.0.0"
   },
   "license": "mit"
 }
