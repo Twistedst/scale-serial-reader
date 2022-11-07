@@ -73,167 +73,93 @@ setInterval( () => isOnline().then( online => {
 
 
 /** Serial Port Stuff **/
-function initSerialPort(){
-  let comName = '';
+async function initSerialPort(){
   log.info( "Init" );
   
-  try {
-	SerialPort.list().then( ( ports, err ) => {
-	  if(err) {
-		log.error( err.message );
-		return;
-	  }
-	  if(ports.length === 0) {
-		log.info( 'NO PORTS' )
-	  }
-	  
-	  const scalePort = ports.find( function( port ){
-		return port[ 'manufacturer' ] === 'Prolific';
-	  } )
-	  
-	  if(!scalePort) {
-		log.error( "Couldn't find scale port" );
-		return;
-	  }
-	  
-	  log.info( 'Found ' + scalePort.path );
-	  
-	  port = new SerialPort( { path: scalePort.path, autoOpen: false, baudRate: 9600 } );
-	  
-	  if(port.isOpen) {
-		log.info( 'port is already open.' );
-	  }
-	  
-	  port.on( 'open', function(){
-		port.pipe( parser );
-		parser.on( 'data', function( data ){
-		  let currentWeight = readLine( data );
-		  log.info( "Current Weight: ", currentWeight );
-		  
-		  let code = `if(document.getElementById("weight") !== null){
+  await SerialPort.list().then( ( ports, err ) => {
+	if(err) {
+	  log.error( err.message );
+	  return;
+	}
+	if(ports.length === 0) {
+	  log.info( 'NO PORTS' )
+	}
+	
+	const scalePort = ports.find( function( port ){
+	  return port[ 'manufacturer' ] === 'Prolific';
+	} )
+	
+	if(!scalePort) {
+	  log.error( "Couldn't find scale port" );
+	  return;
+	}
+	
+	log.info( 'Found ' + scalePort.path );
+	
+	port = new SerialPort( { path: scalePort.path, baudRate: 9600 } );
+	
+	if(port.isOpen) {
+	  log.info( 'port is open.' );
+	}
+ 
+	// port.open( function( err ){
+	//   if(err) {
+	// 	if(port.isOpen) {
+	// 	  port.close();
+	// 	}
+	// 	return console.log( 'Error on open: ', err.message );
+	//   }
+	//   else {
+	// 	console.log( 'Opened Successfully' );
+	//
+	// 	parser = port.pipe( new ReadlineParser() );
+	//
+	// 	parser.on( 'data', function( data ){
+	// 	  let currentWeight = readLine( data );
+	// 	  log.info( "Current Weight: ", currentWeight );
+	//
+	// 	  let code = `if(document.getElementById("weight") !== null){
+    //                 document.getElementById("weight").value = "${currentWeight}";
+    //                 document.getElementById("status").innerHTML = "${status}";
+    //                 document.getElementById("units").innerHTML = "${units}";
+    //                 };`;
+	//
+	// 	  if(mainWindow.webContents.getURL().includes( 'tools/weighStation' )) {
+	// 		log.info( "Execute" );
+	// 		mainWindow.webContents.executeJavaScript( code );
+	// 	  }
+	// 	} );
+	//   }
+	// } )
+ 
+	port.on( 'open', function(){
+	  parser = port.pipe( new ReadlineParser() );
+	  parser.on( 'data', function( data ){
+		let currentWeight = readLine( data );
+		log.info( "Current Weight: ", currentWeight );
+	 
+		let code = `if(document.getElementById("weight") !== null){
                     document.getElementById("weight").value = "${currentWeight}";
                     document.getElementById("status").innerHTML = "${status}";
                     document.getElementById("units").innerHTML = "${units}";
                     };`;
-		  
-		  if(mainWindow.webContents.getURL().includes( 'tools/weighStation' )) {
-			log.info( "Execute" );
-			mainWindow.webContents.executeJavaScript( code );
-		  }
-		} );
-	  } );
 	  
-	  port.on( 'close', function(){
-		log.info( 'Port has been closed.' );
-		closeWindow( 'Port has been closed.' );
-	  } );
-	  
-	  port.on( 'error', function( e ){
-		log.error( e );
-	  } );
-	  
-	  port.open( function( err ){
-		if(err) {
-		  if(port.isOpen) {
-			port.close();
-		  }
-		  return console.log( 'Error on open: ', err.message );
+		if(mainWindow.webContents.getURL().includes( 'tools/weighStation' )) {
+		  log.info( "Execute" );
+		  mainWindow.webContents.executeJavaScript( code );
 		}
-		else {
-		  console.log( 'Opened Successfully' );
-		  
-		  parser = port.pipe( new ReadlineParser() );
-		  parser.on( 'data', function( data ){
-			let currentWeight = readLine( data );
-			log.info( "Current Weight: ", currentWeight );
-			
-			let code = `if(document.getElementById("weight") !== null){
-                    document.getElementById("weight").value = "${currentWeight}";
-                    document.getElementById("status").innerHTML = "${status}";
-                    document.getElementById("units").innerHTML = "${units}";
-                    };`;
-			
-			if(mainWindow.webContents.getURL().includes( 'tools/weighStation' )) {
-			  log.info( "Execute" );
-			  mainWindow.webContents.executeJavaScript( code );
-			}
-		  } );
-		}
-	  } )
-	  
-	  log.info('loop');
-	  // ports.forEach( ( tempPort ) => {
-	  // if(tempPort.manufacturer === "Prolific") {
-	  //   comName = tempPort.path;
-	  //   log.info( 'Found ' + tempPort.path );
-	  //   port = new SerialPort( { path: comName, autoOpen: false, baudRate: 9600 } );
-	  //
-	  //   port.open(function( err ){
-	  // 	if(err) {
-	  // 	  port.close();
-	  // 	  return console.log( 'Error on open: ', err.message );
-	  // 	}
-	  // 	else {
-	  // 	  console.log( 'Opened Successfully' );
-	  //
-	  // 	  parser = port.pipe(new ReadlineParser());
-	  // 	  parser.on( 'data', function( data ){
-	  // 		let currentWeight = readLine( data );
-	  // 		log.info( "Current Weight: ", currentWeight );
-	  //
-	  // 		let code = `if(document.getElementById("weight") !== null){
-	  //               document.getElementById("weight").value = "${currentWeight}";
-	  //               document.getElementById("status").innerHTML = "${status}";
-	  //               document.getElementById("units").innerHTML = "${units}";
-	  //               };`;
-	  //
-	  // 		if(mainWindow.webContents.getURL().includes( 'tools/weighStation' )) {
-	  // 		  log.info( "Execute" );
-	  // 		  mainWindow.webContents.executeJavaScript( code );
-	  // 		}
-	  // 	  } );
-	  // 	}
-	  //   } )
-	  //
-	  //   port.on( 'open', function(){
-	  // 	port.pipe( parser );
-	  // 	parser.on( 'data', function( data ){
-	  // 	  let currentWeight = readLine( data );
-	  // 	  log.info( "Current Weight: ", currentWeight );
-	  //
-	  // 	  let code = `if(document.getElementById("weight") !== null){
-	  //               document.getElementById("weight").value = "${currentWeight}";
-	  //               document.getElementById("status").innerHTML = "${status}";
-	  //               document.getElementById("units").innerHTML = "${units}";
-	  //               };`;
-	  //
-	  // 	  if(mainWindow.webContents.getURL().includes( 'tools/weighStation' )) {
-	  // 		log.info( "Execute" );
-	  // 		mainWindow.webContents.executeJavaScript( code );
-	  // 	  }
-	  // 	} );
-	  //
-	  //   } );
-	  //
-	  //   port.on( 'close', function(){
-	  // 	log.info( 'Port has been closed.' );
-	  // 	closeWindow( 'Port has been closed.' );
-	  //   } );
-	  //
-	  //   port.on( 'error', function( e ){
-	  // 	log.error( e );
-	  //   } );
-	  //
-	  //   // Only inject code when they are on the correct web page
-	  //   // Stream all data coming in from the serial port.
-	  // }
-	  // } );
+	  } );
 	} );
-  }
-  catch(err) {
-	closeWindow( 'You have lost internet.' );
-	log.info( 'I caught a thing. '.err );
-  }
+ 
+	port.on( 'close', function(){
+	  log.info( 'Port has been closed.' );
+	  closeWindow( 'Port has been closed.' );
+	} );
+ 
+	port.on( 'error', function( e ){
+	  log.error( e );
+	} );
+  } );
 }
 
 
