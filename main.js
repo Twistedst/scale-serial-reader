@@ -119,7 +119,7 @@ async function initSerialPort(){
 	
 	log.info( 'Found ' + scalePort.path );
 	
-	port = new SerialPort( { path: scalePort.path, baudRate: 19200 } );
+	port = new SerialPort( { path: scalePort.path, baudRate: 9600 } );
 	
 	if(port.isOpen) {
 	  log.info( 'port is open.' );

@@ -39,15 +39,15 @@
   },
   "devDependencies": {
     "@babel/cli": "^7.19.3",
-    "@babel/core": "^7.19.6",
-    "@babel/preset-env": "^7.19.4",
-    "electron": "^21.2.2",
+    "@babel/core": "^7.20.2",
+    "@babel/preset-env": "^7.20.2",
+    "electron": "^17.4.11",
     "electron-builder": "^23.6.0",
-    "electron-rebuild": "^2.3.5"
+    "electron-rebuild": "^3.2.9"
   },
   "dependencies": {
     "electron-log": "^4.4.8",
-    "electron-updater": "^4.6.5",
+    "electron-updater": "^5.3.0",
     "is-online": "^9.0.0",
     "serialport": "^10.4.0"
   },
