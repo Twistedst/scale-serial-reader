@@ -2,25 +2,13 @@ const { autoUpdater } = require( 'electron-updater' );
 const log             = require( 'electron-log' );
 
 const { BrowserWindow, app } = require( 'electron' );
-const SerialPort             = require( 'serialport' );
-const Readline               = SerialPort.parsers.Readline;
+const { SerialPort }         = require( 'serialport' );
+const { ReadlineParser }     = require( '@serialport/parser-readline' );
 const path                   = require( 'path' );
 const url                    = require( 'url' );
 const regex                  = /(ST|US),GS,\s+([0-9.]+)(lb|kb)/g;
 const currentEnvironment     = process.env.NODE_ENV;
 const isOnline               = require( 'is-online' );
-const possibleComNames       = [
-  "/dev/cu.usbserial",
-  'COM1',
-  'COM2',
-  'COM3',
-  'COM4',
-  'COM5',
-  'COM6',
-  'COM7',
-  'COM8',
-  'COM9',
-]; //dev/tty.usbserial = MAC ; COM3 = Windows
 
 autoUpdater.logger                       = log;
 autoUpdater.logger.transports.file.level = 'info';
@@ -28,7 +16,7 @@ log.info( 'App starting...' );
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
-let mainWindow, units, status, port;
+let mainWindow, units, status, port, currentWeight, prevWeight, countdown;
 
 let windowOptions = {
   center: true,
@@ -38,10 +26,14 @@ let windowOptions = {
   height: 768,
 };
 
+let stableTimer = process.env.stableTimer | 1000;
+
 function readLine( line ){
-  log.info( 'Line ' + line );
+  // log.info( 'Line ' + line );
+  
   let parsedLine = '0.000';
   let stableString;
+  
   while((m = regex.exec( line )) !== null) {
 	// This is necessary to avoid infinite loops with zero-width matches
 	if(m.index === regex.lastIndex) {
@@ -51,10 +43,12 @@ function readLine( line ){
 	parsedLine   = m[ 2 ];
 	stableString = m[ 1 ];
   }
-  if(stableString !== undefined) {
-	status = stableString;
-  }
-  log.info( "Status ", status );
+  
+  // if(stableString !== undefined) {
+  // status = stableString;
+  // }
+  // log.info( "Status ", status );
+  
   return parsedLine;
 }
 
@@ -71,75 +65,92 @@ setInterval( () => isOnline().then( online => {
 	} ), 1000
 );
 
+let stableCountdown = setInterval( () => {
+	  if(currentWeight && currentWeight !== "0.000") {
+		// Weight is still the same so deduct countdown timer to check for stable
+		if(currentWeight === prevWeight) {
+		  if(countdown <= 0) {
+			// Stable
+			if(status !== 'ST')
+			{
+			  status = 'ST';
+			  log.info( 'STABLE');
+			}
+		  }
+		  else {
+		 
+			countdown = countdown - 25;
+			log.info( countdown );
+		  }
+		}
+		else {
+		  log.info( "Current Weight: ", currentWeight );
+		  countdown = stableTimer;
+		  prevWeight  = currentWeight;
+		  status = 'US';
+		}
+	  }
+	}, 10
+);
+
 
 /** Serial Port Stuff **/
-function initSerialPort(){
-  let comName  = '';
-  const parser = new Readline();
+async function initSerialPort(){
   log.info( "Init" );
+  status = 'US';
   
-  try {
-	SerialPort.list().then( ( ports ) => {
-	  if(ports.length === 0) {
-		log.info( 'NO PORTS' )
-	  }
-	  
-	  ports.forEach( ( tempPort ) => {
-		log.info( 'Found ' + tempPort.path );
-		
-		if(tempPort.manufacturer === "Prolific") {
-		  comName = tempPort.path;
-		  
-		  port = new SerialPort( comName, { autoOpen: false } );
-		  port.open( function( err ){
-			if(err) {
-			  port.close();
-			  return console.log( 'Error on open: ', err.message );
-			}
-			else {
-			  console.log( 'Opened Successfully' );
-			}
-		  } )
-		  
-		  port.on( 'open', function(){
-			port.pipe( parser );
-			parser.on( 'data', function( data ){
-			  let currentWeight = readLine( data );
-			  log.info( "Current Weight: ", currentWeight );
-			  
-			  let code = `if(document.getElementById("weight") !== null){
+  await SerialPort.list().then( ( ports, err ) => {
+	if(err) {
+	  log.error( err.message );
+	  return;
+	}
+	if(ports.length === 0) {
+	  log.info( 'NO PORTS' )
+	}
+	
+	const scalePort = ports.find( function( port ){
+	  return port[ 'manufacturer' ] === 'Prolific';
+	} )
+	
+	if(!scalePort) {
+	  log.error( "Couldn't find scale port" );
+	  return;
+	}
+	
+	log.info( 'Found ' + scalePort.path );
+	
+	port = new SerialPort( { path: scalePort.path, baudRate: 9600 } );
+	
+	if(port.isOpen) {
+	  log.info( 'port is open.' );
+	}
+	
+	port.on( 'open', function(){
+	  parser = port.pipe( new ReadlineParser() );
+	  parser.on( 'data', function( data ){
+		currentWeight = readLine( data );
+
+		let code = `if(document.getElementById("weight") !== null){
                     document.getElementById("weight").value = "${currentWeight}";
                     document.getElementById("status").innerHTML = "${status}";
                     document.getElementById("units").innerHTML = "${units}";
                     };`;
-			  
-			  if(mainWindow.webContents.getURL().includes( 'tools/weighStation' )) {
-				log.info( "Execute" );
-				mainWindow.webContents.executeJavaScript( code );
-			  }
-			} );
-			
-		  } );
-		  
-		  port.on( 'close', function(){
-			log.info( 'Port has been closed.' );
-			closeWindow( 'Port has been closed.' );
-		  } );
-		  
-		  port.on( 'error', function( e ){
-			log.error( e );
-		  } );
-		  
-		  // Only inject code when they are on the correct web page
-		  // Stream all data coming in from the serial port.
+		
+		if(mainWindow.webContents.getURL().includes( 'tools/weighStation' )) {
+		  mainWindow.webContents.executeJavaScript( code );
 		}
 	  } );
 	} );
-  }
-  catch(err) {
-	closeWindow( 'You have lost internet.' );
-	log.info( 'I caught a thing. '.err );
-  }
+	
+	port.on( 'close', function(){
+	  log.info( 'Port has been closed.' );
+	  closeWindow( 'Port has been closed.' );
+	} );
+	
+	port.on( 'error', function( e ){
+	  log.error( e );
+	} );
+  } );
 }
 
 

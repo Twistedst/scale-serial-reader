@@ -1,10 +1,11 @@
 {
   "name": "scale-serialreader",
   "productName": "ScaleSerialReader",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "An Electron application with node serialport that streams data from a serial-usb to a website.",
   "author": "Steven Hawley",
   "main": "main.js",
+  "module": "CommonJS",
   "scripts": {
     "postinstall-mac": "sudo npm rebuild --runtime=electron --target=1.8.8 --disturl=https://atom.io/download/atom-shell --build-from-source",
     "start": "electron .",
@@ -37,18 +38,18 @@
     "buildDependenciesFromSource": true
   },
   "devDependencies": {
-    "@babel/cli": "^7.13.16",
-    "@babel/core": "^7.14.0",
-    "@babel/preset-env": "^7.14.1",
-    "electron": "^11.4.6",
-    "electron-builder": "^22.11.3",
-    "electron-rebuild": "^2.3.5"
+    "@babel/cli": "^7.19.3",
+    "@babel/core": "^7.20.2",
+    "@babel/preset-env": "^7.20.2",
+    "electron": "^17.4.11",
+    "electron-builder": "^23.6.0",
+    "electron-rebuild": "^3.2.9"
   },
   "dependencies": {
-    "electron-log": "^4.3.5",
-    "electron-updater": "^4.3.9",
+    "electron-log": "^4.4.8",
+    "electron-updater": "^5.3.0",
     "is-online": "^9.0.0",
-    "serialport": "^9.0.0"
+    "serialport": "^10.4.0"
   },
   "license": "mit"
 }
