@@ -175,7 +175,7 @@ function createWindow(){
   }
   else {
 	// and load the index.html of the app.
-	mainWindow.loadURL( 'https://oms.fulfillment.com/' );
+	mainWindow.loadURL( 'https://oms.fulfillment.app/' );
   }
   // Emitted when the window is closed.
   mainWindow.on( 'closed', function(){
