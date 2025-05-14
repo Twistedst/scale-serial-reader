@@ -1,7 +1,7 @@
 const { autoUpdater } = require( 'electron-updater' );
 const log             = require( 'electron-log' );
 
-const { BrowserWindow, app } = require( 'electron' );
+const { BrowserWindow, app, Notification } = require( 'electron' );
 const { SerialPort }         = require( 'serialport' );
 const { ReadlineParser }     = require( '@serialport/parser-readline' );
 const path                   = require( 'path' );
@@ -9,6 +9,7 @@ const url                    = require( 'url' );
 const regex                  = /(ST|US),GS,\s+([0-9.]+)(lb|kb)/g;
 const currentEnvironment     = process.env.NODE_ENV;
 const isOnline               = require( 'is-online' );
+const manufacturerList = ['Prolific','FTDI'];
 
 autoUpdater.logger                       = log;
 autoUpdater.logger.transports.file.level = 'info';
@@ -53,6 +54,10 @@ function readLine( line ){
 }
 
 function closeWindow( closeMessage = 'you did something wrong.' ){
+  new Notification({
+	title: 'Weigh Station Error',
+	body: closeMessage
+  }).show()
   mainWindow.close();
   log.info( 'Window closed because ' + closeMessage );
 }
@@ -109,11 +114,12 @@ async function initSerialPort(){
 	}
 	
 	const scalePort = ports.find( function( port ){
-	  return port[ 'manufacturer' ] === 'Prolific';
+	  return manufacturerList.includes(port[ 'manufacturer' ]); // Manufacturer of the port is in the list of allowed
 	} )
 	
 	if(!scalePort) {
-	  log.error( "Couldn't find scale port" );
+	  closeWindow( "Couldn't find a scale."  );
+	  log.error( "Couldn't find a scale." );
 	  return;
 	}
 	
@@ -144,7 +150,7 @@ async function initSerialPort(){
 	
 	port.on( 'close', function(){
 	  log.info( 'Port has been closed.' );
-	  closeWindow( 'Port has been closed.' );
+	  closeWindow( 'Lost connection to scale.' );
 	} );
 	
 	port.on( 'error', function( e ){
@@ -214,11 +220,11 @@ app.on( 'activate', function(){
 } );
 
 app.on( 'will-quit', function(){
-  if(port.isOpen)
+  if(port && port.isOpen)
 	port.close();
 } );
 
 app.on( 'quit', function(){
-  if(port.isOpen)
+  if(port && port.isOpen)
 	port.close();
 } );
