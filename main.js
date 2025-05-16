@@ -1,7 +1,7 @@
 const { autoUpdater } = require( 'electron-updater' );
 const log             = require( 'electron-log' );
 
-const { BrowserWindow, app, Notification } = require( 'electron' );
+const { BrowserWindow, app, Notification, dialog } = require( 'electron' );
 const { SerialPort }         = require( 'serialport' );
 const { ReadlineParser }     = require( '@serialport/parser-readline' );
 const path                   = require( 'path' );
@@ -118,7 +118,7 @@ async function initSerialPort(){
 	} )
 	
 	if(!scalePort) {
-	  closeWindow( "Couldn't find a scale."  );
+	  // closeWindow( "Couldn't find a scale."  );
 	  log.error( "Couldn't find a scale." );
 	  return;
 	}
@@ -200,9 +200,23 @@ function createWindow(){
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.on( 'ready', function(){
-  autoUpdater.checkForUpdatesAndNotify();
+  autoUpdater.checkForUpdates();
   createWindow();
 } );
+
+autoUpdater.on('update-available', () => {
+  dialog.showMessageBox({
+	type: 'info',
+	title: 'New Update Available',
+	message: 'A new version of the application is available.',
+	buttons: ['Download Now']
+  }, (response) => {
+	if (response === 0) {
+	  autoUpdater.downloadUpdate().then( r => autoUpdater.quitAndInstall() );
+	}
+  });
+});
+
 
 // Quit when all windows are closed.
 app.on( 'window-all-closed', function(){
