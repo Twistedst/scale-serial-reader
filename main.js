@@ -6,7 +6,7 @@ const { SerialPort }         = require( 'serialport' );
 const { ReadlineParser }     = require( '@serialport/parser-readline' );
 const path                   = require( 'path' );
 const url                    = require( 'url' );
-const regex                  = /(ST|US),GS,\s+([0-9.]+)(lb|kb)/g;
+const regex                  = /(ST|US),(?:GS|GW),\s*([0-9.]+)\s*(lb|kg|kb)/g;
 const currentEnvironment     = process.env.NODE_ENV;
 const isOnline               = require( 'is-online' );
 const manufacturerList = ['Prolific','FTDI'];
@@ -34,6 +34,7 @@ function readLine( line ){
   
   let parsedLine = '0.000';
   let stableString;
+  //ST,GW,    0.00 lb    -- From the new larger scale
   
   while((m = regex.exec( line )) !== null) {
 	// This is necessary to avoid infinite loops with zero-width matches
