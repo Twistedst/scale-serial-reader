@@ -17,7 +17,7 @@ log.info( 'App starting...' );
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
-let mainWindow, units, status, port, currentWeight, prevWeight, countdown;
+let mainWindow, units, status, port, currentWeight, prevWeight, lastChangeAt;
 
 let windowOptions = {
   center: true,
@@ -27,7 +27,7 @@ let windowOptions = {
   height: 768,
 };
 
-let stableTimer = process.env.stableTimer | 1000;
+const stableTimer = Number( process.env.stableTimer ) || 1000;
 
 function readLine( line ){
   // log.info( 'Line ' + line );
@@ -71,29 +71,20 @@ setInterval( () => isOnline().then( online => {
 	} ), 1000
 );
 
+// Mark the weight stable once it has held the same value for stableTimer ms.
+// Uses wall-clock time so the hold is accurate regardless of interval timing.
 let stableCountdown = setInterval( () => {
-	  if(currentWeight && currentWeight !== "0.000") {
-		// Weight is still the same so deduct countdown timer to check for stable
-		if(currentWeight === prevWeight) {
-		  if(countdown <= 0) {
-			// Stable
-			if(status !== 'ST')
-			{
-			  status = 'ST';
-			  log.info( 'STABLE');
-			}
-		  }
-		  else {
-		 
-			countdown = countdown - 25;
-			log.info( countdown );
-		  }
-		}
-		else {
+	  // Ignore empty/zero readings ("0.000" from the old scale, "0.00" from the new one)
+	  if(currentWeight && parseFloat( currentWeight ) > 0) {
+		if(currentWeight !== prevWeight) {
 		  log.info( "Current Weight: ", currentWeight );
-		  countdown = stableTimer;
-		  prevWeight  = currentWeight;
-		  status = 'US';
+		  prevWeight   = currentWeight;
+		  lastChangeAt = Date.now();
+		  status       = 'US';
+		}
+		else if(status !== 'ST' && Date.now() - lastChangeAt >= stableTimer) {
+		  status = 'ST';
+		  log.info( 'STABLE' );
 		}
 	  }
 	}, 10
