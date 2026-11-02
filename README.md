@@ -1,112 +1,101 @@
-# scale-serial-reader
-An Electron app that utilizes Serialport to read from a serial-usb scale and then inject the data into a webpage.
+# Weigh Station (scale-serial-reader)
 
-Originally cloned from [electron-serialport](https://github.com/johnny-five-io/electron-serialport)
+An Electron desktop app that reads weights from a USB/serial shipping scale and injects them live into the OMS Weigh Station page.
 
-This is a minimal Electron application based on the [Quick Start Guide](http://electron.atom.io/docs/tutorial/quick-start) within the Electron documentation.
+The app opens `https://oms.fulfillment.app/` in a window, finds the scale on a serial port, and, whenever the user is on a `tools/weighStation` page, writes the current reading into that page's form fields.
 
-A basic Electron application needs just these files:
+## How it works
 
-- `package.json` - Points to the app's main file and lists its details and dependencies.
-- `main.js` - Starts the app and creates a browser window to render HTML. This is the app's **main process**.
-- `index.html` - A web page to render. This is the app's **renderer process**.
+1. **Startup:** checks GitHub Releases for an update, then opens the OMS in a 1366×768 window.
+2. **Scale detection:** once the page loads, it lists serial ports and picks the first one whose manufacturer is in `manufacturerList` (currently `Prolific` and `FTDI`). It connects at **9600 baud** and reads line by line.
+3. **Parsing:** each line is matched against:
 
-You can learn more about each of these components within the [Quick Start Guide](http://electron.atom.io/docs/tutorial/quick-start).
+   ```
+   /(ST|US),(?:GS|GW),\s*([0-9.]+)\s*(lb|kg|kb)/
+   ```
 
-## To Use
+   For example, `ST,GW,    0.00 lb` gives weight `0.00` and units `lb`.
+4. **Stability:** the app works out stability itself and doesn't trust the scale's `ST`/`US` flag. A non-zero weight that stays unchanged for `stableTimer` ms (default 1000) is marked `ST` (stable). Any change resets it to `US` (unstable).
+5. **Injection:** on a `tools/weighStation` URL, the app sets these elements on the page:
 
-To clone and run this repository you'll need [Git](https://git-scm.com) and [Node.js](https://nodejs.org/en/download/) (which comes with [npm](http://npmjs.com)) installed on your computer. From your command line:
+   | Element id | Set to |
+   |---|---|
+   | `weight` (input) | current weight, e.g. `12.40` |
+   | `status` | `ST` or `US` |
+   | `units`  | `lb` / `kg` |
+
+### Safety behavior
+
+- The window closes with a notification if the PC **loses internet** (checked every second) or the **scale disconnects**.
+- If no scale is found at launch, the app logs an error and stays open. It does not retry.
+
+## Requirements
+
+- Node.js and npm
+- Windows (the primary target; builds an NSIS installer). macOS has helper scripts but isn't actively maintained.
+- A scale with a Prolific or FTDI USB-serial adapter that outputs the format above. For other adapters, add the manufacturer to `manufacturerList` in `main.js`.
+
+## Development
 
 ```bash
-# Clone this repository
-git clone https://github.com/electron/electron-quick-start
-# Go into the repository
-cd electron-quick-start
-# Install dependencies
-npm install
-# Run the app
-npm start
+git clone https://github.com/Twistedst/scale-serial-reader.git
+cd scale-serial-reader
+npm install        # also rebuilds serialport for Electron (postinstall)
+npm start          # runs against production OMS
 ```
 
-## To Package and Create Installer
-If these commands are successful, the packaged app will be placed inside the dist folder.
+To point at a local OMS on `http://localhost:3000` with DevTools open:
+
 ```bash
-# Package for Windows
-npm run dist
+npm run test-win   # Windows (NODE_ENV=WINDEV)
+npm run test-mac   # macOS   (NODE_ENV=DEV)
 ```
 
-This repo contains the **bare minimum code** to have an auto-updating Electron app using [`electron-updater`](https://github.com/electron-userland/electron-builder/tree/master/packages/electron-updater) with releases stored on GitHub.
+`WeighStation.bat` is a shortcut that runs `npm run start`.
 
-If you can't use GitHub, you can use other providers:
+### Environment variables
 
-- [Complete electron-updater HTTP example](https://gist.github.com/iffy/0ff845e8e3f59dbe7eaf2bf24443f104)
-- [Complete electron-updater from gitlab.com private repo example](https://gist.github.com/Slauta/5b2bcf9fa1f6f6a9443aa6b447bcae05)
+| Variable | Purpose |
+|---|---|
+| `NODE_ENV` | `DEV` / `WINDEV` load `localhost:3000` with DevTools; anything else loads production |
+| `stableTimer` | ms a reading must hold steady before it's marked stable (default `1000`) |
+| `GH_TOKEN` | GitHub token with `repo` scope, needed only for `npm run publish` |
 
-**NOTE:** If you want to run through this whole process, you will need to fork this repo on GitHub and replace all instances of `iffy` with your GitHub username before doing the following steps.
+### Logs
 
-1. For macOS, you will need a code-signing certificate.
+Logs are written by [electron-log](https://github.com/megahertz/electron-log). On Windows they go to:
+`%USERPROFILE%\AppData\Roaming\ScaleSerialReader\logs\main.log`
 
-   Install Xcode (from the App Store), then follow [these instructions](https://developer.apple.com/library/content/documentation/IDEs/Conceptual/AppDistributionGuide/MaintainingCertificates/MaintainingCertificates.html#//apple_ref/doc/uid/TP40012582-CH31-SW6) to make sure you have a "Mac Developer" certificate.  If you'd like to export the certificate (for automated building, for instance) [you can](https://developer.apple.com/library/content/documentation/IDEs/Conceptual/AppDistributionGuide/MaintainingCertificates/MaintainingCertificates.html#//apple_ref/doc/uid/TP40012582-CH31-SW7).  You would then follow [these instructions](https://www.electron.build/code-signing).
+## Building & releasing
 
-2. Adjust `package.json` if needed.
+```bash
+npm run pack       # unpacked build in dist/win-unpacked (quick test)
+npm run dist       # installer: dist/Weigh Station Setup <version>.exe
+```
 
-   By default, `electron-updater` will try to detect the GitHub settings (such as the repo name and owner) from reading the `.git/config` or from reading other attributes within `package.json`.  If the auto-detected settings are not what you want, configure the [`publish`](https://github.com/electron-userland/electron-builder/wiki/Publishing-Artifacts#PublishConfiguration) property as follows:
+To release an auto-update:
 
-        {
-            ...
-            "build": {
-                "publish": [{
-                    "provider": "github",
-                    "owner": "iffy",
-                    "repo": "electron-updater-example"
-                }],
-                ...
-            }
-        }
+1. Bump `version` in `package.json`.
+2. Set `GH_TOKEN` (PowerShell: `[Environment]::SetEnvironmentVariable("GH_TOKEN","<token>","User")`, then restart the terminal).
+3. Run `npm run publish`. This builds and uploads a **draft** release to GitHub.
+4. Publish the draft on the GitHub Releases page.
 
-3. Install necessary dependencies with:
+Installed copies check for updates on launch and prompt the user to download and install.
 
-        yarn
+## Project structure
 
-   or
+```
+main.js          Main process: window, serial port, parsing, auto-update
+renderer.js      Unused (legacy test renderer; the real UI is the OMS page)
+WeighStation.bat Launch helper
+assets/icons/    App icons
+dist/            Build output (git-ignored)
+```
 
-        npm install
+## Credits
 
-4. Generate a GitHub access token by going to <https://github.com/settings/tokens/new>.  The access token should have the `repo` scope/permission.  Once you have the token, assign it to an environment variable
+Originally based on [electron-serialport](https://github.com/johnny-five-io/electron-serialport) and the [electron-updater example](https://github.com/iffy/electron-updater-example).
 
-   On macOS/linux:
+## License
 
-        export GH_TOKEN="<YOUR_TOKEN_HERE>"
-
-   On Windows, run in powershell:
-
-        [Environment]::SetEnvironmentVariable("GH_TOKEN","<YOUR_TOKEN_HERE>","User")
-
-   Make sure to restart IDE/Terminal to inherit latest env variable.
-
-5. Publish for your platform with:
-
-        build -p always
-
-   or
-
-        npm run publish
-
-   If you want to publish for more platforms, edit the `publish` script in `package.json`.  For instance, to build for Windows and macOS:
-
-        ...
-        "scripts": {
-            "publish": "build --mac --win -p always"
-        },
-        ...
-
-6. Release the release on GitHub by going to <https://github.com/YOUR_GIT_HUB_USERNAME/electron-updater-example/releases>, editing the release and clicking "Publish release."
-
-7. Download and install the app from <https://github.com/YOUR_GIT_HUB_USERNAME/electron-updater-example/releases>.
-
-8. Update the version in `package.json`, commit and push to GitHub.
-
-9. Do steps 5 and 6 again.
-
-10. Open the installed version of the app and see that it updates itself.
-Learn more about Electron and its API in the [documentation](http://electron.atom.io/docs/).
+MIT. See [LICENSE](LICENSE).
